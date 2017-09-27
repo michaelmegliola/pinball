@@ -1,0 +1,335 @@
+  _______            _
+ /_  __(_)____ ___  (_)____  ____ _
+  / / / // __ `__ \/ // __ \/ __ `/
+ / / / // / / / / / // / / / /_/ /
+/_/ /_//_/ /_/ /_/_//_/ /_/\__, /
+                          /____/
+    ______                                              __
+   / ____/_________ _____ ___  ___ _      ______  _____/ /__
+  / /_   / ___/ __ `/ __ `__ \/ _ \ | /| / / __ \/ ___/ //_/
+ / __/  / /  / /_/ / / / / / /  __/ |/ |/ / /_/ / /  / ,<
+/_/    /_/   \__,_/_/ /_/ /_/\___/|__/|__/\____/_/  /_/|_| 
+
+A library for making Java animation and timing-based control easier!
+
+Report bugs, read the documentation, and get new releases at:
+   http://java.net/projects/timingframework/
+
+++-------------------++
+|| 7.4 Release Notes ||
+++-------------------++
+
+19/May/2015
+
+o Release byte code is now Java 7 (it is getting hard to
+  to tell if the library use is consistent with Java 1.6).
+  The source code is still buildable in 1.6 (for now) so if
+  you use 1.6 you can still import the sources into your
+  work (and let us know if you run into any issues).
+o The PropertySetter utility now deals with overloaded setter
+  methods in a more principled manner. If more than a single
+  one-argument "setX" method is found then the argument type
+  is examined and a heuristic choice made. The heuristic
+  used is documented in the PropertySetter class Javadoc.
+  http://java.net/jira/browse/TIMINGFRAMEWORK-26
+o The KeyFrames.Builder class is now final.
+
+++-------------------++
+|| 7.3 Release Notes ||
+++-------------------++
+
+10/Feb/2014
+
+o Fixed a bug where a timing target added after an animation
+  had been started did not have its begin() method invoked.
+  Instead, and incorrectly, the begin() method on each of the
+  animation's existing timing targets was called.
+  http://java.net/jira/browse/TIMINGFRAMEWORK-25
+
+++-------------------++
+|| 7.2 Release Notes ||
+++-------------------++
+
+14/Jun/2013
+
+o Fixed a bug where invoking restartReverse() on an animation
+  that was NOT running caused the animation to start in its
+  normal direction. This behavior was incorrect. The code has
+  been fixed so that, in this situation, the animation starts
+  up and goes in its reverse direction.
+  See the discussion about this bug at
+  http://java.net/jira/browse/TIMINGFRAMEWORK-24
+
+++-------------------++
+|| 7.1 Release Notes ||
+++-------------------++
+
+29/May/2013
+
+o Fixed a bug where multiple calls to restart() or restartReverse()
+  could cause an IllegalStateException to be thrown. This is
+  because several starts were being queued up and, after the first
+  one, they would fail. This has been fixed so that only the first
+  restart invocation is started, any subsequent calls prior to the
+  completion of the restart are ignored.
+  See the discussion about this bug at
+  http://java.net/jira/browse/TIMINGFRAMEWORK-23
+
+++-------------------++
+|| 7.0 Release Notes ||
+++-------------------++
+
+17/May/2013
+
+o A serious bug that could lock a timing source thread was fixed.
+  Firing a trigger was calling stopAndAwait() within the timing
+  source thread context which blocked forever. This has been fixed
+  and warnings added to the await methods on Animator to avoid
+  this type of problem in the future. Thanks to Jan Studeny for
+  tracking down this serious problem
+  See the discussion about this bug at
+  http://java.net/jira/browse/TIMINGFRAMEWORK-19
+o A new demo called TwoButtonShimmy authored by Jan Studeny was
+  added, Tim Halloran ported it to SWT. It animates buttons
+  back and forth. It exercises several Triggers. Thanks!
+o Two new methods were added to Animator "restart()" and
+  "restartReverse()" these are non-blocking approaches to restart
+  an animation. If the animation is not running they behave exactly
+  like start() and startReverse() -- and could be used in place of
+  those methods. The race demos in Swing and SWT have been changed
+  to use restart so the first button is now "Go/Restart" rather
+  than just "Go" and you can always press it.
+o The documentation for the Animator methods "await()" and
+  "stopAndAwait()" has been augmented to include the warning:
+    Never invoke this method within the thread context of
+    this animation's timing source -- doing so will cause
+    this call to block forever. If you are trying to wait
+    for the animation to stop so that it can be restarted,
+    then you should use restart() or restartReverse() which
+    are safe to call in the thread context of this animation's
+    timing source.
+   These methods were designed for testing, but see the
+   discussion about this occurring in user code at
+   https://java.net/jira/browse/TIMINGFRAMEWORK-22
+
+++-------------------++
+|| 6.1 Release Notes ||
+++-------------------++
+
+03/Apr/2013
+
+o I completed removing all expressions that cause the generation of
+  synthetic accessor methods for fields, methods, and constructors.
+  This release is only to push out this change aimed at avoiding
+  rarely triggered performance glitches that could be lurking.
+
+++-------------------++
+|| 6.0 Release Notes ||
+++-------------------++
+
+01/Apr/2013
+
+o Added ability to set a start delay for the animation. This existed
+  in the original library but was removed in the 2.0 release. To use
+  this feature call the new setStartDelay method on an animation
+  builder object. See the discussion on this new feature at
+  http://java.net/jira/browse/TIMINGFRAMEWORK-18
+o When a timing target is added to a running animation the begin()
+  method was not being invoked prior to this release. This protocol
+  problem has been fixed. (I'm really hoping here that no code relies
+  on begin() not being invoked and that adding targets after an
+  animation is started is rare).
+o "default" visibility is now used in many class implementations for
+  fields rather than "private" visibility. This is to avoid generation
+  of synthetic accessors for these fields. This should not impact
+  client code and improves performance.
+
+++-------------------++
+|| 5.5 Release Notes ||
+++-------------------++
+
+12/Dec/2012
+
+o The ability to have an Animation dispose its TimingSource when it
+  ends was added. See Animator.Builder.setDisposeTimingSource(boolean)
+  for more information. This capability is useful if you have long
+  periods of time in your program with no animations running.
+o A bug was fixed: http://java.net/jira/browse/TIMINGFRAMEWORK-16
+  This bug caused property setters begin call to have the wrong value
+  when start direction was BACKWARD. For example a property animation
+  on an int from 1 to 50 backwards would say: 1, 50, 49, ...
+o A bug was fixed: http://java.net/jira/browse/TIMINGFRAMEWORK-17
+  The core jar in Maven was including images from the demos making
+  it balloon from 200K to over 1M.
+
+++-------------------++
+|| 5.1 Release Notes ||
+++-------------------++
+
+12/Jul/2012
+
+o Core, Swing, and SWT were tested under Java 7 as well as Java 6.
+  Note that release and source code is still Java 6, however, folks
+  using Java 7 should be okay).
+o The semantics of Animator.isRunning() changed to include waiting
+  for calls to registered TimingTargets to complete. Not doing this
+  causes several subtle bugs if calls into a TimingTarget are very
+  long running. The stop() and cancel() calls return immediately,
+  but you need to call await() to be sure the animation has stopped.
+  This only becomes a factor if you have code like:
+    a.stop();
+    a.start();
+  This snippet may fail with an IllegalStateException thrown during
+  the call to start() because a is still stopping. To fix this you
+  could use
+    a.stop();
+    try { a.await(); } catch(InterruptedException ignore) {}
+    a.start()
+  but this is a bit clunky so two convenience methods were added to
+  Animator: stopAndAwait() and cancelAndAwait(). Thus you can use:
+    a.stopAndAwait();
+    a.start();
+o Javadoc was added to the TimingTarget reverse(Animator) to clarify
+  when and how it is invoked by an animation.
+o A bug was fixed: http://java.net/jira/browse/TIMINGFRAMEWORK-15
+  This bug could cause getCurrentDirection() to report the wrong
+  direction in the end(Animator) TimingTarget callback after a
+  call to reverseNow().
+  
+++-------------------++
+|| 5.0 Release Notes ||
+++-------------------++
+
+12/Apr/2012
+
+o Support for Android started. This involved a few changes to core code
+  (shared by Swing, SWT, and Android) because Android doesn't support
+  use of the PropertyDescriptor and IntrospectionException classes in
+  the java.beans package. The Android version is not released yet but
+  can be obtained from the project's subversion. It is still a bit of
+  a work in progress.
+o A bug was fixed: http://java.net/jira/browse/TIMINGFRAMEWORK-11
+  This bug could cause timingEvent() to be called before begin() on
+  a TimingTarget.
+o A bug was fixed: http://java.net/jira/browse/TIMINGFRAMEWORK-12
+  TimingTarget(s) now get called in the order they were added to Animator.
+o A bug was fixed: http://java.net/jira/browse/TIMINGFRAMEWORK-13
+  The initial value of a PropertySetter is now set upon begin(), rather
+  than the first call to timingEvent(). This is highly useful in some
+  use cases.
+o A useful "toString()" method was added to Animator, the TimingSource(s),
+  and TimingTargetAdapter to help debugging.  A "debug" name which can
+  be set was added to Animator and TimingTargetAdapter.
+o Removed the KeyFramesTimingTarget class. This can be purpose built by
+  any client that needs it. (Copy an old version into your source code if
+  you really need this class.)
+   
+++-------------------++
+|| 4.1 Release Notes ||
+++-------------------++
+
+16/Sep/2011
+
+o AnimatorBuilder has been changed to Animator.Builder to better match the
+  implementation suggested by Josh Bloch in Effective Java (second edition)
+  Item 2: Consider a builder when faced with many constructor parameters.
+
+o setDefaultTimingSource is now a static method on the Animator class
+  (it was moved from the old AnimatorBuilder class). 
+
+o KeyFramesBuilder has been changed to KeyFrames.Builder  to better match the
+  implementation suggested by Josh Bloch in Effective Java (second edition)
+  Item 2: Consider a builder when faced with many constructor parameters.
+  
+o Maven is now supported for the core and Swing releases. For more
+  information please see the project Wiki.
+
+++-------------------++
+|| 3.0 Release Notes ||
+++-------------------++
+
+13/Apr/2011
+
+The Timing Framework API is more stable, better tested, probably now usable
+in real projects.
+
+o KeyFramesBuilder added to allow KeyFrames to to be constructed using the
+  builder pattern.
+  
+o Overhaul of the KeyFrames implementation (removal of KeyValues and
+  KeyTimes). KeyFrames can be used without a PropertySetter via
+  KeyFramesTimingTarget. KeyFramesTimingTarget can help to avoid the
+  cost of reflective getter/setter calls. Key frames can be examined
+  via iteration or a get method.
+
+o Overhaul of PropertySetter implementation. PropertySetter is now a utility
+  that provides TimingTarget instances. "To" animations, which get the
+  current value of a property as the staring value for an animation, can
+  animate between multiple values (not just one additional value). The
+  ClickAndGo demo was added to illustrate "to" animations.
+
+o Overhaul of the Trigger API to use enum types for events and encapsulate the
+  implementation of each trigger type. Swing and SWT each have a TriggerUtility
+  that constructs triggers. The Swing and SWT implementations use the same
+  trigger event types. Changes made to Chet Haase's Triggers demo to
+  illustrate auto-reverse of a triggered animation.
+
+o JRenderer, JRendererTarget, and Viewport provide the basis for a Swing
+  and SWT rendering framework. The Swing implementation supports both active
+  and passive rendering. The SWT implementation supports only passive
+  rendering (it is not clear that active rendering in SWT will ever be
+  possible). The TooManyBalls demo uses this framework.
+
+o I18N class added to serve error messages to the Timing Framework.
+
+o More work on the timing source API to simplify/fix the 2.0 release.
+  In particular, the API was changed to ensure that callbacks happen in the
+  correct thread context (broken in prior releases). Further, a constructor
+  was added to SwingTimerTimingSource and SWTTimingSource that sets a
+  reasonable default period of 15 milliseconds.
+
+o JUnit tests added to unit test the core of the Timing Framework.
+  ManualTimingSource helps support unit testing as well as the Swing active
+  rendering implementation.
+
+o All the demos were moved into a single package:
+   org.jdesktop.swing.animation.demos for the Swing demos, and
+   org.jdesktop.swt.animation.demos for the SWT demos.
+
+o The demos were split out into their own Jar file. For example, for SWT
+  timingframework-swt-3.0.jar contains the SWT 3.0 release of the Timing
+  Framework and timingframework-swt-demos-3.0.jar contains the demos. This
+  change makes the release Jar file a bit smaller.
+
+o The SureLogic concurrency annotations are included in the release Jar
+  instead of as a separate Jar. These annotations help to document, and
+  allow tool verification, of the concurrency policies of the Timing
+  Framework implementation.
+
+++-------------------++
+|| 2.0 Release Notes ||
+++-------------------++
+
+23/Mar/2011
+
+A quick release of updates to allow feedback, however, the API is not stable.
+
+o AnimatorBuilder added to allow Animator to to be constructed using the
+  builder pattern. In particular, a default timing source can be set for
+  all Animator instances that are built.
+
+o Separated time sources from Animator to make it easier for Animator
+  instances to share a time source and not tie Animator's implementation
+  to Swing. Chet Haase discussed the noticeable performance problem
+  of starting one javax.swing.Timer per Animator instance at JavaOne
+  2008. The TooManyBallsBroken demo (only in the Swing distribution)
+  illustrates this problem. Tim Halloran's SWT port did not exhibit
+  this timer problem because it used the SWT Display.timerExec
+  method which shares a timer. 
+  
+o Began work to fix parameterized type use in the Timing Framework.
+
+o Animator implementation made thread-safe. Further work is needed to make
+  the entire Timing Framework thread-safe.
+
+o Ported all of the Swing demos from Filthy Rich Clients to SWT.
