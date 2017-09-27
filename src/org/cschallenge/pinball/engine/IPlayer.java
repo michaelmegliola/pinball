@@ -27,8 +27,8 @@ public interface IPlayer {
 	 */
 	public void init(Team team);
 	/**
-	 * Called when this IPlayer's tower expires (ie, reports that it has expired or has 
-	 * no collisions remaining).
+	 * Called when any of this IPlayer's towers expire (ie, when a tower 
+	 * reports that it has expired or has no collisions remaining).
 	 * 
 	 * @param tower the expired tower
 	 */
@@ -41,7 +41,7 @@ public interface IPlayer {
 	 */
 	public void startTurn(Turn turn, TowerQueue queue);
 	/**
-	 * Called at the end of each of this IPlayer's turns.
+	 * Called when any of this player's towers detects a ball.
 	 * 
 	 * @param turn
 	 * @param queue

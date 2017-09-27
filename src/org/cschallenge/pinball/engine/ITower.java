@@ -33,7 +33,8 @@ public interface ITower {
 	public Heading onCaptureBall(TeamType teamType, Heading heading);
 	/**
 	 * Called when a ball passes within detection range of a tower.
-	 * Balls are detected within a radius of approximately 5 squares.
+	 * Balls are detected within a radius of a maximum of 5 squares
+	 * (see {@link #getDetectionRadius()}).
 	 * 
 	 * @param teamType
 	 * @param position
