@@ -49,7 +49,7 @@ public class PinballFrame implements JRendererTarget<GraphicsConfiguration, Grap
 	public static final int TICKS_PER_TURN = GamePiece.SIZE_PX / ANIMATION_SPEED;
 	
 	private static final String RESOURCE_PATH = "org/cschallenge/pinball/resources/";
-	private static final int TIMER_FREQUENCY_MILLIS = 20;
+	private static final int TIMER_FREQUENCY_MILLIS = 40;
 	
 	private static PinballFrame theApp;
 	private int ticks = 0;
@@ -270,7 +270,7 @@ public class PinballFrame implements JRendererTarget<GraphicsConfiguration, Grap
 		JLabel queueRed = new JLabel("Queue size: ");
 		queueSizeRed = new JLabel("0");
 		
-		JLabel instructions = new JLabel("CTRL+P to pause; CTRL+S to step");
+		JLabel instructions = new JLabel("CTRL+P / CTRL+S");
 		
 		holdLeftTop.add(resourcesGreen);
 		holdLeftTop.add(collisionsGreen);
@@ -315,9 +315,9 @@ public class PinballFrame implements JRendererTarget<GraphicsConfiguration, Grap
 					// Finish animation of current turn before stopping animation.
 					if (PinballFrame.this.ticksRemaining-- == 0) {
 						if (result.equals(Result.GREEN_VICTORY)) {
-							JOptionPane.showMessageDialog(null, "Green wins!");
+							JOptionPane.showMessageDialog(null, "Blue wins!");
 						} else if (result.equals(Result.RED_VICTORY)) {
-							JOptionPane.showMessageDialog(null, "Red wins!");
+							JOptionPane.showMessageDialog(null, "Yellow wins!");
 						} else if (result.equals(Result.TIE_GAME)) {
 							JOptionPane.showMessageDialog(null, "Tied game.");
 						}
@@ -367,9 +367,9 @@ public class PinballFrame implements JRendererTarget<GraphicsConfiguration, Grap
 		Stroke def = new BasicStroke();
 		g2d.setStroke(def);
 		
-		g2d.setColor(Color.red);
+		g2d.setColor(Color.yellow);
 		g2d.drawRect(0, Position.BOARD_SIZE_PX - GamePiece.SIZE_PX * 3 - 1, GamePiece.SIZE_PX * 3, GamePiece.SIZE_PX * 3);
-		g2d.setColor(Color.green);
+		g2d.setColor(Color.blue);
 		g2d.drawRect(Position.BOARD_SIZE_PX - GamePiece.SIZE_PX * 3 - 1, 0, GamePiece.SIZE_PX * 3, GamePiece.SIZE_PX * 3);
 		for (GamePiece piece : engine.getDeletedGamePieces()) {
 			g2d.drawImage(piece.getImage(ticks), piece.px, piece.py, null);

@@ -7,7 +7,7 @@ import org.cschallenge.pinball.engine.PinballEngine.Team;
 
 public abstract class GamePiece {
 	
-	public static final int SIZE_PX = 24;
+	public static final int SIZE_PX = 12;
 	
 	protected Team team;
 	/**
