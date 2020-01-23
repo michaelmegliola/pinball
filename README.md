@@ -10,4 +10,3 @@ This includes:
 - Sample AIs to test your AI against
 - All server files used on our website
 
-If you are having any trouble, please visit our tutorials on our [website](http://cschallenges.org).
